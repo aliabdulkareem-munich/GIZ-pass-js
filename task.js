@@ -1,44 +1,56 @@
-let numbers = [
-    5,
-    8,
-    0,
-    1,
-    9,
-    11,
-    15,
-    16
-];
 
-console.log("Original numbers list: ", numbers)
+//for I/O related operations
+fs = require('fs')
 
-for(let i = 0 ; i < numbers.length ; i++)
+//this function does I/O and it writes its output into output.txt
+function sortIntFromFile(filePath)
 {
-    for(let j = 0 ; j < numbers.length - 1 ; j++)
+    fs.readFile(filePath, 'ascii', (err,data) => {
+    if (err) throw err;
+    
+    
+//copying the const data into a modifiable array.
+    let sortedNumbers = data.split(',').map(Number);
+
+//we do have Array.prototy.sort builtin 
+//but for the sake of the task we are using bubble sort
+
+    console.log("Original numbers list: ", sortedNumbers)
+
+// m and n are local values to reduces the number of of access for Array.prototype.length
+    for(let i = 0, n= sortedNumbers.length -1 ; i < n; ++i)
     {
-        if(numbers[i] > numbers[j + 1])
+  
+  //each element is checked with its right-adjacent elemtn, so we start from i+1
+    for(let j = i+1 , m = sortedNumbers.length ; j < m; ++j)
         {
-            let temp = numbers[j];
-            numbers[j] = numbers[j + 1]
-            numbers[j + 1] = temp;
+        if(sortedNumbers[i] > sortedNumbers[j])
+            {
+            //math hack to avoid temp variable
+            sortedNumbers[j] = sortedNumbers[j] + sortedNumbers[i]
+            sortedNumbers[i] = sortedNumbers[j] - sortedNumbers[i];
+            sortedNumbers[j] = sortedNumbers[j] - sortedNumbers[i];
+            }
         }
     }
-}
 
-console.log("Numbers list After sorting: ", numbers)
 
-for(let i = 0 ; i < numbers.length ; i++)
-{
-    for(let j = 0 ; j < numbers.length - 1 ; j++)
+
+    console.log("Numbers list After sorting: ", sortedNumbers)
+
+
+//we can just print it backwards for Desc order.
+    console.log("Numbers list After Desc sorting: ", sortedNumbers.reverse())
+
+    fs.writeFile('Output.txt', sortedNumbers, (err) => 
     {
-        if(numbers[i] < numbers[j + 1])
-        {
-            let temp = numbers[j];
-            numbers[j] = numbers[j + 1]
-            numbers[j + 1] = temp;
-        }
-    }
-}
+      
+    // In case of a error throw err.
+    if (err) throw err;
+    })
+    
+})}
 
-console.log("Numbers list After Desc sorting: ", numbers)
+sortIntFromFile('data.txt');
 
 
